@@ -332,12 +332,77 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
         private SerializedProperty _EventDescs;
         private int                _prevArraySize = 0;
 
-        public override void OnInspectorGUI()
+        public void OnSceneGUI()
         {
+            #region Omit
             /********************************************
              *    초기화를 진행한다....
              * *****/
-            if((_EventDescs=serializedObject.FindProperty("EventPresets"))!=null){
+            if ((_EventDescs = serializedObject.FindProperty("EventPresets")) != null)
+            {
+                _prevArraySize = _EventDescs.arraySize;
+            }
+
+            if (_EventDescs == null) return;
+
+
+            /****************************************************************
+             *    현재 Min-Max 범위를 수정하고 있는 프리셋의 핸들을 표시한다...
+             * ******/
+             for(int i=0; i<_prevArraySize; i++){
+
+                FMODEventPresetPlayer player     = (target as FMODEventPresetPlayer);
+                SerializedProperty    element    = _EventDescs.GetArrayElementAtIndex(i);
+                SerializedProperty    position   = element.FindPropertyRelative("EventPos");
+                SerializedProperty    isOverride = element.FindPropertyRelative("OverrideDistance");
+                SerializedProperty    min        = element.FindPropertyRelative("EventMinDistance");
+                SerializedProperty    max        = element.FindPropertyRelative("EventMaxDistance");
+                SerializedProperty    instance   = element.FindPropertyRelative("Instance");
+
+                /**핸들이 표시되지 않는가..?*/
+                if(!element.isExpanded || !position.isExpanded || isOverride.boolValue == false){
+                    continue;
+                }
+
+
+                using (var scope = new EditorGUI.ChangeCheckScope())
+                {
+                    position.vector3Value = Handles.DoPositionHandle(position.vector3Value, Quaternion.identity);
+
+                    Handles.color = Color.red;
+                    min.floatValue = Handles.RadiusHandle(Quaternion.identity, position.vector3Value, min.floatValue);
+
+                    Handles.color = Color.yellow;
+                    max.floatValue = Handles.RadiusHandle(Quaternion.identity, position.vector3Value, max.floatValue);
+
+
+                    /*************************************************************************
+                     * 3D 트랜스폼이 변경되었고, 생성된 EventInstance가 유효하면 값을 수정한다...
+                     * *****/
+                    if (scope.changed && player!=null){
+
+                        FModEventInstance ins = player.EventPresets[i].Instance;
+
+                        if(ins.IsValid)
+                        {
+                            ins.Position3D = position.vector3Value;
+                            ins.Set3DDistance(min.floatValue, max.floatValue);
+                        }
+                    }
+                }
+            }
+
+             serializedObject.ApplyModifiedProperties();
+            #endregion
+        }
+
+        public override void OnInspectorGUI()
+        {
+            #region Omit
+            /********************************************
+             *    초기화를 진행한다....
+             * *****/
+            if ((_EventDescs=serializedObject.FindProperty("EventPresets"))!=null){
                 _prevArraySize = _EventDescs.arraySize;
             }
 
@@ -395,6 +460,7 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
             }
 
             serializedObject.ApplyModifiedProperties();
+            #endregion
         }
     }
 
