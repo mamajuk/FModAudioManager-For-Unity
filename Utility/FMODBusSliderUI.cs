@@ -8,7 +8,7 @@ using UnityEngine.UI;
  * ***/
 #if FMOD_Event_ENUM
 [RequireComponent(typeof(UnityEngine.UI.Slider))]
-public sealed class BusSliderUI : MonoBehaviour
+public sealed class FMODBusSliderUI : MonoBehaviour
 {
     //======================================
     /////      property and Felds       ////
