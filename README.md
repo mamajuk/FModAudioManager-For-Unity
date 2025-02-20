@@ -6,7 +6,7 @@
 **C# Script** 를 작성하면서 특정 음원이 필요할 때마다 이러한 작업들을 반복해야 하며, 이는 **FMod** 에서 사용되는 데이터인 ```Bus```, ```Bank```, ```Parameter```들을 사용할 때도 마찬가지 입니다. 이런 번거로운 작업을 해결하기 위해, ```FModAudioManager``` 는 **FMod Studio Project** 로부터 모든 ```Event```, ```Bus```, ```Bank```, ```Global/Local Parameter```, ```Parameter Max/Min Value```, ```Parameter labled Value```과 대응되는 열거형 및 구조체를 자동으로 작성해줍니다. 또한 생성된 **열거형**과 **구조체**를 사용할 수 있는 **Static methods** 들을 제공함으로서, 직관적이고 편리하게 오디오 관련 스크립트를 작성할 수 있도록 도와줍니다.
 
 ## Tutorial
-먼저 **Package Manager**를 통해 **FMod for Unity API**를 프로젝트에 적용한 다음, ```FModAudioManager```를 적용합니다. 그 후 **Scene** 에서 기존 **Unity Audio API** 관련 컴포넌트들을 모두 제거하고, ```FMOD Studio Listener```와 ```FModAudioManager``` 컴포넌트를 원하는 ```GameObject```에 부착합니다. ( ```FModAudioManager```는 **Scene** 이동으로 파괴되지 않으며, 복수로 존재할 수 없는 컴포넌트입니다. )
+먼저 **Package Manager**를 통해 **FMod for Unity API**를 프로젝트에 적용한 다음, ```FModAudioManager```를 적용합니다. 그 후 **Scene** 에서 기존 **Unity Audio API** 관련 컴포넌트들을 모두 제거하고, ```FMOD Studio Listener```( 3D Event를 사용할 경우 )와 ```FModAudioManager``` 컴포넌트를 원하는 ```GameObject```에 부착합니다. ( ```FModAudioManager```는 **Scene** 이동으로 파괴되지 않으며, 복수로 존재할 수 없는 컴포넌트입니다. )
 
 <table><tr><td>
 <img src="https://github.com/mamajuk/FModAudioManager/blob/main/Readmy_Data/Readmy_ConnectFModProject.gif?raw=true">
