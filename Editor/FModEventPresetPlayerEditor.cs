@@ -12,7 +12,7 @@ using FMODUnity;
 public class FMODEventPresetPlayerEditor : Editor
 {
     private SerializedProperty _EventDescs;
-    private int _prevArraySize = 0;
+    private int                _prevArraySize = 0;
 
     public void OnSceneGUI()
     {
@@ -62,20 +62,25 @@ public class FMODEventPresetPlayerEditor : Editor
                 /*************************************************************************
                  * 3D 트랜스폼이 변경되었고, 생성된 EventInstance가 유효하면 값을 수정한다...
                  * *****/
-                if (scope.changed && player != null){
+                if (scope.changed){
+                    serializedObject.ApplyModifiedProperties();
+                }
+            }
 
-                    FModEventInstance ins = player.EventPresets[i].Instance;
 
-                    if (ins.IsValid)
-                    {
-                        ins.Position3D = position.vector3Value;
-                        ins.Set3DDistance(min.floatValue, max.floatValue);
-                    }
+            /*************************************************************************
+             * 생성된 EventInstance가 유효하면 값을 수정한다...
+             * *****/
+            if (player!=null){
+                FModEventInstance ins = player.GetPresetByIndex(i).Instance;
+
+                if (ins.IsValid)
+                {
+                    ins.Position3D = position.vector3Value;
+                    ins.Set3DDistance(min.floatValue, max.floatValue);
                 }
             }
         }
-
-        serializedObject.ApplyModifiedProperties();
         #endregion
     }
 
@@ -85,8 +90,7 @@ public class FMODEventPresetPlayerEditor : Editor
         /********************************************
          *    초기화를 진행한다....
          * *****/
-        if ((_EventDescs = serializedObject.FindProperty("EventPresets")) != null)
-        {
+        if ((_EventDescs = serializedObject.FindProperty("EventPresets")) != null){
             _prevArraySize = _EventDescs.arraySize;
         }
 

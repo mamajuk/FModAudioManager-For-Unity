@@ -15,14 +15,13 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
     #region Define
     public enum FModEventApplyTiming
     {
-        None            = 0,
-        Start           = 1,
-        CollisionEnter  = 2, 
-        CollisionExit   = 4,
-        TriggerEnter    = 8, 
-        TriggerExit     = 16,
-        Destroy         = 32,
-        ALL             = (Start|CollisionEnter|CollisionExit|TriggerEnter|TriggerExit)
+        None = 0,
+        Start = 1,
+        CollisionEnter = 2,
+        CollisionExit = 4,
+        TriggerEnter = 8,
+        TriggerExit = 16,
+        Destroy = 32,
     }
 
     public enum FModEventPlayMethodType
@@ -49,14 +48,15 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
         public float                    StartTimelinePositionRatio;
 
         [System.NonSerialized]
-        public FModEventInstance        Instance;
+        public FModEventInstance Instance;
     }
     #endregion
 
     //=================================================
     /////          Property and Fields             ////
     //=================================================
-    [SerializeField] public InternalEventDesc[] EventPresets = new InternalEventDesc[0];
+    [SerializeField] InternalEventDesc[] EventPresets = new InternalEventDesc[0];
+
 
 
 
@@ -98,32 +98,32 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
         #region Omit
         int descCount = EventPresets.Length;
 
-        for (int i=0; i<descCount; i++)
+        for (int i = 0; i < descCount; i++)
         {
             //특정 인스턴스만 재생할 경우, 필터와 일치하지 않는 인덱스를 스킵한다...
-            if(filter>=0 && i!=filter){
+            if (filter >= 0 && i != filter) {
                 return;
             }
 
             ref InternalEventDesc desc = ref EventPresets[i];
 
-            bool ContainPlayTiming = ((int)desc.PlayApplyTiming & (int)timing)>0;
-            bool ContainStopTiming = ((int)desc.StopApplyTiming & (int)timing)>0;
+            bool ContainPlayTiming = ((int)desc.PlayApplyTiming & (int)timing) > 0;
+            bool ContainStopTiming = ((int)desc.StopApplyTiming & (int)timing) > 0;
 
 
             /**********************************************
              *    종료 타이밍과 일치하는가?..
              * ****/
-            if(ContainStopTiming){
+            if (ContainStopTiming) {
 
                 /**PlayBGM() 메소드를 사용하는가?**/
-                if(desc.EventPlayType == FModEventPlayMethodType.PlayBGM)
+                if (desc.EventPlayType == FModEventPlayMethodType.PlayBGM)
                 {
                     FModAudioManager.StopBGM();
                 }
 
                 /**Instance.Play() 메소드를 사용하는가?**/
-                if(desc.EventPlayType==FModEventPlayMethodType.Instance_Play && desc.Instance.IsValid)
+                if (desc.EventPlayType == FModEventPlayMethodType.Instance_Play && desc.Instance.IsValid)
                 {
                     desc.Instance.Stop();
                 }
@@ -133,7 +133,7 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
             /**********************************************
              *    시작 타이밍과 일치하는가?..
              * ****/
-            if (ContainPlayTiming){
+            if (ContainPlayTiming) {
 
                 /*PlayOneShotSFX() 메소드를 사용하는가?**/
                 if (desc.EventPlayType == FModEventPlayMethodType.PlayOneShotSFX)
@@ -150,7 +150,7 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
             }
 
             //파괴되는 타이밍이라면 유효한 인스턴스를 파괴한다...
-            if(timing==FModEventApplyTiming.Destroy && desc.Instance.IsValid)
+            if (timing == FModEventApplyTiming.Destroy && desc.Instance.IsValid)
             {
                 desc.Instance.Destroy();
             }
@@ -173,13 +173,13 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
         desc.Instance.TimelinePositionRatio = desc.StartTimelinePositionRatio;
 
         //Min-Max Distance를 덮어씌우는가?
-        if (desc.OverrideDistance){
+        if (desc.OverrideDistance) {
 
             desc.Instance.Set3DDistance(desc.EventMinDistance, desc.EventMaxDistance);
         }
 
         //파라미터를 세팅한다....
-        if (desc.ParamRef.IsValid){
+        if (desc.ParamRef.IsValid) {
 
             desc.Instance.SetParameter(desc.ParamRef);
         }
@@ -187,7 +187,7 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
         desc.Instance.Play();
 
         //사운드가 정지되면 자동으로 파괴되는가?
-        if (desc.IsOneShot){
+        if (desc.IsOneShot) {
 
             desc.Instance.Destroy(true);
         }
@@ -199,6 +199,17 @@ public sealed class FMODEventPresetPlayer : MonoBehaviour
     //=======================================
     /////        Public methods         /////
     //=======================================
+    public InternalEventDesc GetPresetByIndex(int index)
+    {
+        #region Omit
+        if (index<0 || EventPresets.Length <= index){
+            return new InternalEventDesc();
+        }
+
+        return EventPresets[index];
+        #endregion
+    }
+
     public void PlayOneShotSFX(int preset_index)
     {
         #region Omit
